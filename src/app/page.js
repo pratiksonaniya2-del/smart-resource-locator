@@ -9,7 +9,7 @@ import Charts from "./components/Charts";
 import Toast from "./components/Toast";
 import MapView from "./components/MapView";
 import { FaMoon, FaSun } from "react-icons/fa";
-import jsPDF from "jspdf"
+
 export default function Home() {
   const [history, setHistory] = useState([]);
   const [toast, setToast] = useState("");
@@ -30,8 +30,9 @@ export default function Home() {
     setToast("Request allocated successfully");
     setTimeout(() => setToast(""), 2000);
   }
-  function exportPDF() {
-  const doc = new jsPDF();
+  async function exportPDF() {
+const { default: jsPDF } = await import("jspdf");
+const doc = new jsPDF();
 
   doc.setFontSize(20);
   doc.text("Smart Resource Allocator Report", 20, 20);
@@ -84,7 +85,7 @@ export default function Home() {
 
       <section className="flex-1 p-6 space-y-6">
 
-        {/* Navbar */}
+        
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">{activePage}</h1>
 
