@@ -12,7 +12,14 @@ import { FaMoon, FaSun } from "react-icons/fa";
 
 const MapView = dynamic(
   () => import("./components/MapView"),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[400px] rounded-2xl bg-slate-800 flex items-center justify-center text-white">
+        Loading Map...
+      </div>
+    ),
+  }
 );
 
 export default function Home() {
@@ -35,48 +42,49 @@ export default function Home() {
     setToast("Request allocated successfully");
     setTimeout(() => setToast(""), 2000);
   }
+
   async function exportPDF() {
-const { default: jsPDF } = await import("jspdf");
-const doc = new jsPDF();
+    const { default: jsPDF } = await import("jspdf");
+    const doc = new jsPDF();
 
-  doc.setFontSize(20);
-  doc.text("Smart Resource Allocator Report", 20, 20);
+    doc.setFontSize(20);
+    doc.text("Smart Resource Allocator Report", 20, 20);
 
-  doc.setFontSize(12);
-  doc.text(`Total Requests: ${history.length}`, 20, 50);
+    doc.setFontSize(12);
+    doc.text(`Total Requests: ${history.length}`, 20, 50);
 
-  doc.text(
-    `High Priority: ${
-      history.filter((item) => item.priority === "high").length
-    }`,
-    20,
-    60
-  );
+    doc.text(
+      `High Priority: ${
+        history.filter((item) => item.priority === "high").length
+      }`,
+      20,
+      60
+    );
 
-  doc.text(
-    `Food Requests: ${
-      history.filter((item) => item.need === "food").length
-    }`,
-    20,
-    70
-  );
+    doc.text(
+      `Food Requests: ${
+        history.filter((item) => item.need === "food").length
+      }`,
+      20,
+      70
+    );
 
-  doc.text(
-    `Medical Requests: ${
-      history.filter((item) => item.need === "medical").length
-    }`,
-    20,
-    80
-  );
+    doc.text(
+      `Medical Requests: ${
+        history.filter((item) => item.need === "medical").length
+      }`,
+      20,
+      80
+    );
 
-  doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 100);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 100);
 
-  doc.save("ngo-report.pdf");
-}
+    doc.save("ngo-report.pdf");
+  }
+
   return (
     <main
-    
-        className={`min-h-screen flex ${
+      className={`min-h-screen flex ${
         darkMode
           ? "bg-slate-900 text-white"
           : "bg-gray-100 text-black"
@@ -90,29 +98,26 @@ const doc = new jsPDF();
 
       <section className="flex-1 p-6 space-y-6">
 
-        
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">{activePage}</h1>
 
           <div className="flex items-center gap-4">
+            <p className="text-sm opacity-70">{time}</p>
 
-  <p className="text-sm opacity-70">{time}</p>
+            <button
+              onClick={exportPDF}
+              className="px-4 py-2 rounded-lg bg-blue-500 text-white"
+            >
+              Export PDF
+            </button>
 
-  <button
-    onClick={exportPDF}
-    className="px-4 py-2 rounded-lg bg-blue-500 text-white"
-  >
-    Export PDF
-  </button>
-
-  <button
-    onClick={() => setDarkMode(!darkMode)}
-    className="p-3 rounded-lg bg-emerald-500 text-white"
-  >
-    {darkMode ? <FaSun /> : <FaMoon />}
-  </button>
-
-</div>
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-3 rounded-lg bg-emerald-500 text-white"
+            >
+              {darkMode ? <FaSun /> : <FaMoon />}
+            </button>
+          </div>
         </div>
 
         {activePage === "Dashboard" && (
@@ -121,7 +126,13 @@ const doc = new jsPDF();
             <RequestForm addRequest={addRequest} />
             <Charts history={history} />
             <RequestTable history={history} />
-            <MapView />
+
+            <div>
+              <h2 className="text-xl font-bold mb-3">
+                Live Resource Map
+              </h2>
+              <MapView />
+            </div>
           </>
         )}
 
@@ -138,8 +149,14 @@ const doc = new jsPDF();
 
         {activePage === "Reports" && (
           <>
-          <Charts history={history} />
-          <MapView />
+            <Charts history={history} />
+
+            <div>
+              <h2 className="text-xl font-bold mb-3">
+                NGO Coverage Map
+              </h2>
+              <MapView />
+            </div>
           </>
         )}
 
