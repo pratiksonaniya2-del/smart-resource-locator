@@ -8,11 +8,12 @@ import RequestTable from "./components/RequestTable";
 import Charts from "./components/Charts";
 import Toast from "./components/Toast";
 import dynamic from "next/dynamic";
-
-const MapView = dynamic(() => import("./components/MapView"), {
-  ssr: false,
-});
 import { FaMoon, FaSun } from "react-icons/fa";
+
+const MapView = dynamic(
+  () => import("./components/MapView"),
+  { ssr: false }
+);
 
 export default function Home() {
   const [history, setHistory] = useState([]);
